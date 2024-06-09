@@ -80,7 +80,10 @@ PreparedStatement st = null;
 			st.setInt(5, obj.getDepartment().getId());
 			st.setInt(6, obj.getId());
 			
-			st.executeUpdate();
+			int rows = st.executeUpdate();
+			if(rows == 0) {
+				throw new DbException("ID não foi encontrado!");
+			}
 			
 		} catch(SQLException e) {
 			throw new DbException(e.getMessage());
@@ -93,6 +96,17 @@ PreparedStatement st = null;
 	@Override
 	public void deletById(Integer id) {
 	
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM seller WHERE Id = ?");
+			
+			st.setInt(1, id);
+			st.executeUpdate();
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 
